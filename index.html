@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRIATech — Pruébate el look antes de comprarlo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0A0805;--inks:#181410;--inkc:#1E1A16;
+  --cream:#F5F0E8;--cream2:#EDE8DF;--cream3:#C8C0B4;
+  --gold:#C9A96E;--goldl:#E8D5A8;--goldd:rgba(201,169,110,0.13);
+  --goldb:rgba(201,169,110,0.3);
+  --muted:#8A7F72;--muted2:#5A5248;
+  --bdr:rgba(245,240,232,0.07);--bdrm:rgba(245,240,232,0.14);
+  --grn:#6DBF9E;--grnd:rgba(109,191,158,0.1);--grnb:rgba(109,191,158,0.25);
+  --red:#C4685A;--redd:rgba(196,104,90,0.12);
+  --fd:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --fb:'Jost','Helvetica Neue',Arial,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--ink);color:var(--cream);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:100;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:16px 48px;border-bottom:.5px solid var(--bdr);background:rgba(10,8,5,.95);backdrop-filter:blur(20px);transition:transform .4s ease}
+.hdr-l{font-size:10px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.hdr-c{display:flex;justify-content:center}
+.logo{font-family:var(--fd);font-size:22px;font-weight:400;letter-spacing:.06em;color:var(--cream)}
+.logo span{color:var(--gold)}
+.hdr-r{display:flex;justify-content:flex-end}
+.pp{display:flex;align-items:center;gap:6px;background:var(--grnd);border:.5px solid var(--grnb);border-radius:100px;padding:5px 13px;font-size:10px;font-weight:300;color:var(--grn);letter-spacing:.08em;text-transform:uppercase}
+.pd{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:blink 2.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 48px 80px;position:relative;overflow:hidden}
+.hlines{position:absolute;inset:0;pointer-events:none;display:flex;justify-content:center;gap:200px}
+.hline{width:.5px;background:linear-gradient(to bottom,transparent,var(--bdr),rgba(245,240,232,.1),var(--bdr),transparent)}
+.hover{font-size:10px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:30px;background:var(--goldd);border:.5px solid var(--goldb);border-radius:100px;padding:5px 18px;display:inline-block}
+.hh1{font-family:var(--fd);font-size:clamp(52px,8vw,100px);font-weight:300;line-height:1.05;letter-spacing:-.02em;color:var(--cream);margin-bottom:26px}
+.hh1 em{font-style:italic;color:var(--gold)}
+.hp{font-size:15px;font-weight:300;line-height:1.85;color:var(--muted);max-width:460px;margin:0 auto 48px}
+.hcta{display:inline-flex;align-items:center;gap:12px;background:transparent;border:.5px solid var(--cream3);color:var(--cream);padding:15px 38px;font-family:var(--fb);font-size:11px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:all .35s ease}
+.hcta:hover{background:var(--cream);color:var(--ink)}
+.hmeta{position:absolute;bottom:44px;left:0;right:0;display:flex;justify-content:center}
+.hsr{display:flex;align-items:center;gap:32px}
+.hst{text-align:center}
+.hsn{display:block;font-family:var(--fd);font-size:28px;font-weight:300;color:var(--cream);line-height:1}
+.hsl{display:block;font-size:10px;font-weight:300;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.hss{font-size:16px;color:var(--bdrm)}
+
+/* SHELL */
+.shell{display:grid;grid-template-columns:68px 1fr;max-width:900px;margin:0 auto;padding:56px 36px 100px}
+
+/* RAIL */
+.rail{display:flex;flex-direction:column;align-items:center;position:sticky;top:76px;height:fit-content;padding-top:4px}
+.ri{display:flex;flex-direction:column;align-items:center;gap:5px}
+.rin{font-family:var(--fd);font-size:11px;font-weight:400;letter-spacing:.1em;color:var(--muted2);transition:color .3s}
+.ril{font-size:9px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--muted2);transition:color .3s}
+.ri.active .rin{color:var(--gold)}.ri.active .ril{color:var(--cream3)}
+.ri.done .rin,.ri.done .ril{color:var(--grn)}
+.rc{width:.5px;height:36px;background:var(--bdr);transition:background .5s}
+.rc.done{background:rgba(109,191,158,.4)}
+
+/* PANELS */
+.panels{padding-left:32px}
+.panel{display:none}
+.panel.active{display:block;animation:reveal .5s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes reveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* PANEL HEADING */
+.ph{margin-bottom:32px}
+.phi{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:12px}
+.pht{font-family:var(--fd);font-size:44px;font-weight:300;line-height:1.1;letter-spacing:-.01em;color:var(--cream);margin-bottom:10px}
+.pht em{font-style:italic;color:var(--gold)}
+.phd{font-size:14px;font-weight:300;color:var(--muted);line-height:1.7}
+
+/* UPLOAD */
+.drop{border:.5px solid var(--bdrm);padding:48px 32px;text-align:center;cursor:pointer;transition:all .35s ease;position:relative;margin-bottom:24px}
+.drop::before,.drop::after{content:'';position:absolute;width:16px;height:16px;border-color:var(--gold);border-style:solid;transition:all .3s}
+.drop::before{top:-1px;left:-1px;border-width:1px 0 0 1px}
+.drop::after{bottom:-1px;right:-1px;border-width:0 1px 1px 0}
+.drop:hover,.drop.dov{border-color:var(--goldb);background:var(--goldd)}
+.drop:hover::before,.drop.dov::before,.drop:hover::after,.drop.dov::after{width:32px;height:32px}
+.dicon{color:var(--gold);margin:0 auto 16px;width:fit-content}
+.dp1{font-family:var(--fd);font-size:20px;font-weight:300;color:var(--cream);margin-bottom:8px}
+.dp2{font-size:13px;font-weight:300;color:var(--muted);margin-bottom:6px}
+.dlink{background:none;border:none;color:var(--gold);cursor:pointer;font-family:var(--fb);font-size:13px;font-weight:300;text-decoration:underline;text-underline-offset:3px}
+.dfmt{font-size:10px;font-weight:300;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2)}
+input[type=file]{display:none}
+
+/* PREVIEW */
+.prev{display:none;gap:22px;align-items:flex-start;margin-bottom:24px}
+.prev.vis{display:flex;animation:reveal .4s ease}
+.piw{position:relative;flex-shrink:0}
+#photoCanvas{width:150px;height:196px;display:block;border:.5px solid var(--bdrm);background:var(--inks)}
+.pov{position:absolute;inset:0;background:rgba(10,8,5,.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
+.piw:hover .pov{opacity:1}
+.pchg{background:none;border:.5px solid var(--cream);color:var(--cream);padding:8px 14px;font-family:var(--fb);font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.pchg:hover{background:var(--cream);color:var(--ink)}
+
+/* COLOR REPORT */
+.cr{flex:1;border:.5px solid var(--bdrm);padding:20px;position:relative;min-width:0}
+.cr::before{content:'';position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:1px solid var(--gold);border-left:1px solid var(--gold)}
+.crh{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:10px;font-weight:300;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.sp{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 1.2s ease-in-out infinite;flex-shrink:0}
+.crdh{display:flex;align-items:center;gap:8px;color:var(--grn)}
+.crrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+.crkey{font-size:10px;font-weight:300;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.crval{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-size:15px;font-weight:400;color:var(--cream)}
+.crdot{width:13px;height:13px;border-radius:50%;border:.5px solid rgba(255,255,255,.2);flex-shrink:0}
+.crse{font-size:10px;font-family:var(--fb);font-weight:300;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:.5px solid var(--goldb);padding:3px 10px}
+.crdiv{height:.5px;background:var(--bdr)}
+.crpl{font-size:10px;font-weight:300;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:14px 0 9px}
+.crcs{display:flex;gap:6px;flex-wrap:wrap}
+.crch{font-size:10px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border:.5px solid;cursor:default}
+.crq{margin-top:14px;padding:12px 14px;border-left:1px solid var(--gold);font-family:var(--fd);font-style:italic;font-size:13px;font-weight:300;color:var(--muted);line-height:1.7}
+
+/* VIBES */
+.vibes{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bdr);border:.5px solid var(--bdrm);margin-bottom:8px}
+.vc{background:var(--inks);padding:22px 18px;cursor:pointer;position:relative;transition:background .25s}
+.vc:hover{background:rgba(201,169,110,.05)}.vc.sel{background:var(--goldd)}
+.vcbadge{position:absolute;top:16px;right:16px;font-size:9px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:.5px solid var(--goldb);padding:3px 8px}
+.vcnum{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--bdrm);line-height:1;margin-bottom:12px;transition:color .3s}
+.vc.sel .vcnum{color:var(--gold)}
+.vcname{font-family:var(--fd);font-size:22px;font-weight:400;color:var(--cream);margin-bottom:4px}
+.vchouse{font-size:10px;font-weight:300;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.vcdesc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.vctags{display:flex;flex-wrap:wrap;gap:4px}
+.vctags span{font-size:9px;font-weight:300;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);border:.5px solid var(--bdr);padding:2px 7px}
+.vcring{position:absolute;bottom:18px;right:18px;width:17px;height:17px;border-radius:50%;border:.5px solid var(--bdrm);transition:all .3s}
+.vc.sel .vcring{border-color:var(--gold);background:var(--gold)}
+.vc.sel .vcring::after{content:"✓";font-size:9px;color:var(--ink);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* PANEL FOOTER / BUTTONS */
+.pf{margin-top:32px;display:flex;justify-content:flex-end;align-items:center;gap:12px}
+.pf.two{justify-content:space-between}
+.err{font-size:12px;color:var(--red);display:none}
+.bte{display:inline-flex;align-items:center;gap:10px;background:var(--cream);border:none;color:var(--ink);padding:13px 30px;font-family:var(--fb);font-size:10px;font-weight:400;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.bte:hover{background:var(--goldl)}.bte:disabled{background:var(--inkc);color:var(--muted2);border:.5px solid var(--bdr);cursor:not-allowed}
+.btei{background:transparent;border:.5px solid var(--cream3);color:var(--cream)}
+.btei:hover{background:var(--cream);color:var(--ink)}
+.btg{background:transparent;border:.5px solid var(--bdrm);color:var(--muted);padding:13px 20px;font-family:var(--fb);font-size:10px;font-weight:300;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.btg:hover{border-color:var(--cream3);color:var(--cream)}
+.bts{background:transparent;border:none;color:var(--muted);padding:8px 2px;font-family:var(--fb);font-size:10px;font-weight:300;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:color .3s;text-decoration:underline;text-underline-offset:4px}
+.bts:hover{color:var(--cream)}
+
+/* LOADING */
+.loading{min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.rww{width:60px;height:80px;margin:0 auto 32px;position:relative}
+.rwf{width:2px;height:56px;background:var(--cream);margin:0 auto;animation:walk 1.6s ease-in-out infinite;position:relative}
+.rwf::before{content:'';position:absolute;width:11px;height:11px;border-radius:50%;background:var(--cream);top:-14px;left:-4.5px}
+.rwf::after{content:'';position:absolute;width:22px;height:1px;background:var(--cream);top:16px;left:-10px;animation:arms 1.6s ease-in-out infinite}
+@keyframes walk{0%,100%{transform:translateX(-16px)}50%{transform:translateX(16px)}}
+@keyframes arms{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+.rws{width:34px;height:3px;background:radial-gradient(ellipse,var(--muted2) 0%,transparent 70%);margin:0 auto;opacity:.3;animation:ws 1.6s ease-in-out infinite}
+@keyframes ws{0%,100%{transform:translateX(-16px) scaleX(.7)}50%{transform:translateX(16px) scaleX(1.2)}}
+.ldh{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--cream);margin-bottom:10px}
+.ldsub{font-size:13px;font-weight:300;font-style:italic;color:var(--muted);margin-bottom:26px;min-height:20px}
+.pw{width:200px;height:1px;background:var(--bdr);margin:0 auto 18px;overflow:hidden}
+.pb{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--goldl));transition:width .4s ease}
+.lst{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:300;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);flex-wrap:wrap;justify-content:center}
+.ls{transition:color .3s}.ls.active{color:var(--gold)}.ls.done{color:var(--grn)}
+.lsd{color:var(--bdrm)}
+.load-err{display:none;margin-top:20px;padding:14px 20px;background:var(--redd);border:.5px solid rgba(196,104,90,.3);font-size:13px;color:var(--red);line-height:1.6;text-align:center;max-width:400px}
+
+/* RESULTS */
+.results{display:flex;flex-direction:column;gap:32px;animation:reveal .6s cubic-bezier(.16,1,.3,1) forwards}
+.remast{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:20px;border-bottom:.5px solid var(--bdr)}
+.reiss{font-size:10px;font-weight:300;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:8px}
+.reh2{font-family:var(--fd);font-size:36px;font-weight:300;color:var(--cream);line-height:1.1}
+.recp{text-align:right;padding-left:20px;flex-shrink:0}
+.recn{display:block;font-family:var(--fd);font-size:44px;font-weight:300;color:var(--gold);line-height:1}
+.recl{font-size:10px;font-weight:300;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.rsl{font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+
+/* VIRTUAL TRY-ON */
+.tryon-showcase{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tryon-col{display:flex;flex-direction:column;gap:8px}
+.tryon-label{font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-align:center}
+.tryon-img-wrap{position:relative;border:.5px solid var(--bdrm);overflow:hidden;background:var(--inks);aspect-ratio:3/4}
+.tryon-img{width:100%;height:100%;object-fit:cover;display:block}
+#resultCanvas{width:100%;height:100%;object-fit:cover;display:block}
+.tryon-generating{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--inks)}
+.tg-spinner{width:32px;height:32px;border:1.5px solid var(--bdr);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tg-text{font-size:11px;font-weight:300;color:var(--muted);letter-spacing:.08em;text-align:center;line-height:1.7}
+.tryon-done{display:none;width:100%;height:100%}
+.tryon-error{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:var(--redd)}
+.tryon-error p{font-size:12px;color:var(--red);line-height:1.6}
+
+/* CATALOG */
+.catalog-section{background:var(--inks);border:.5px solid var(--bdrm);padding:20px}
+.catalog-title{font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.catalog-sub{font-size:12px;font-weight:300;color:var(--muted2);margin-bottom:16px}
+.catalog-tabs{display:flex;gap:1px;background:var(--bdr);margin-bottom:14px;overflow-x:auto}
+.ctab{flex:1;min-width:fit-content;padding:10px 14px;text-align:center;font-size:10px;font-weight:300;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);cursor:pointer;background:var(--inkc);border:none;font-family:var(--fb);transition:all .2s;white-space:nowrap}
+.ctab.active{color:var(--gold);background:var(--goldd)}
+.catalog-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.citem{background:var(--inkc);border:.5px solid var(--bdr);cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.citem:hover{border-color:var(--goldb)}.citem.selected{border-color:var(--gold);border-width:1.5px}
+.citem-img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:var(--inks)}
+.citem-info{padding:8px}
+.citem-name{font-size:10px;font-weight:400;color:var(--cream);display:block;line-height:1.3}
+.citem-price{font-size:10px;font-weight:300;color:var(--gold);display:block;margin-top:2px}
+.citem-check{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--gold);display:none;align-items:center;justify-content:center;font-size:10px;color:var(--ink)}
+.citem.selected .citem-check{display:flex}
+.btn-apply{margin-top:14px;width:100%}
+
+/* EDITORIAL */
+.ei{display:flex;flex-direction:column;gap:14px}
+.eirule{height:.5px;background:var(--bdrm)}
+.eiq{font-family:var(--fd);font-style:italic;font-size:20px;font-weight:300;line-height:1.65;color:var(--cream2);text-align:center;padding:0 14px}
+.eiq strong{font-style:normal;color:var(--gold);font-weight:400}
+
+/* PALETTE */
+.palstrip{display:flex;height:40px;margin-bottom:10px}
+.palblk{flex:1;cursor:default;transition:flex .3s}.palblk:hover{flex:2}
+.pfnote{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6}
+
+/* TRIPTYCH */
+.trip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bdr);border:.5px solid var(--bdr)}
+.tc{background:var(--inkc);padding:20px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px}
+.tci{font-size:13px;color:var(--gold)}
+.tcn{font-family:var(--fd);font-size:20px;font-weight:300;color:var(--cream);line-height:1}
+.tcl{font-size:9px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* ACTIONS / PRIVACY */
+.ra{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pseal{border:.5px solid var(--grnb);padding:16px 20px;background:var(--grnd)}
+.pslock{display:flex;align-items:center;gap:8px;margin-bottom:6px;color:var(--grn)}
+.pst{font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--grn)}
+.psp{font-size:12px;font-weight:300;color:var(--muted);line-height:1.7}
+
+/* ANALYTICS */
+.af{border:.5px solid var(--bdr)}
+.afs{font-size:10px;font-weight:300;letter-spacing:.12em;color:var(--muted);cursor:pointer;padding:12px 16px;list-style:none;display:block;transition:color .2s}
+.afs:hover{color:var(--cream)}
+.afg{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bdr);border-top:.5px solid var(--bdr)}
+.afi{background:var(--inkc);padding:12px;text-align:center}
+.afn{display:block;font-family:var(--fd);font-size:20px;font-weight:300;color:var(--gold)}
+.afl{display:block;font-size:9px;font-weight:300;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* FOOTER */
+.ftr{border-top:.5px solid var(--bdr);padding:26px 48px}
+.ftrin{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.ftrlogo{font-family:var(--fd);font-size:18px;font-weight:400;color:var(--cream);opacity:.4;letter-spacing:.06em}
+.ftrlogo span{color:var(--gold)}
+.ftrlinks{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:300;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2)}
+.flsep{opacity:.35}
+.ftrcopy{font-size:10px;font-weight:300;color:var(--muted2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--inkc);border:.5px solid var(--bdrm);padding:10px 24px;font-size:12px;font-weight:300;color:var(--cream);opacity:0;pointer-events:none;z-index:9999;transition:all .4s cubic-bezier(.16,1,.3,1);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:680px){
+  .hdr{padding:14px 20px}.hdr-l{display:none}
+  .hero{padding:90px 22px 56px}.hh1{font-size:46px}.hsr{gap:16px}
+  .shell{grid-template-columns:1fr;padding:32px 18px 80px}
+  .rail{flex-direction:row;justify-content:center;gap:12px;position:static;margin-bottom:24px;padding:0}
+  .rc{width:22px;height:.5px}.panels{padding-left:0}
+  .pht{font-size:34px}.vibes{grid-template-columns:1fr}
+  .tryon-showcase{grid-template-columns:1fr}
+  .catalog-grid{grid-template-columns:repeat(2,1fr)}
+  .trip{grid-template-columns:1fr}.prev{flex-direction:column}
+  .ftrin{flex-direction:column;gap:12px;text-align:center}
+  .ra{flex-direction:column;align-items:flex-start}
+  .afg{grid-template-columns:repeat(2,1fr)}
+  .remast{flex-direction:column;gap:12px}.recp{text-align:left;padding-left:0}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <div class="hdr-l">S/S 2026 · Santiago, Chile</div>
+  <div class="hdr-c"><span class="logo">CRIA<span>Tech</span></span></div>
+  <div class="hdr-r"><div class="pp"><span class="pd"></span><span>Privacidad activa</span></div></div>
+</header>
+
+<section class="hero" id="heroSec">
+  <div class="hlines"><div class="hline"></div><div class="hline"></div><div class="hline"></div></div>
+  <p class="hover">Virtual Try-On · Colorimetría IA · Santiago de Chile</p>
+  <h1 class="hh1"><em>Pruébate</em> el look<br>antes de comprarlo.</h1>
+  <p class="hp">Sube tu foto. La IA analiza tu colorimetría y te viste digitalmente con el outfit recomendado. Ve cómo te queda antes de ir a la tienda.</p>
+  <button class="hcta" id="heroCta">
+    <span>Comenzar mi análisis</span>
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M6.5 2l4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+  </button>
+  <div class="hmeta">
+    <div class="hsr">
+      <div class="hst"><span class="hsn">IA</span><span class="hsl">Virtual Try-On real</span></div>
+      <span class="hss">·</span>
+      <div class="hst"><span class="hsn">4</span><span class="hsl">vibes de temporada</span></div>
+      <span class="hss">·</span>
+      <div class="hst"><span class="hsn">0</span><span class="hsl">datos guardados</span></div>
+    </div>
+  </div>
+</section>
+
+<main class="shell" id="shell">
+  <aside class="rail">
+    <div class="ri active" id="ri1"><span class="rin">01</span><span class="ril">Foto</span></div>
+    <div class="rc" id="rc1"></div>
+    <div class="ri" id="ri2"><span class="rin">02</span><span class="ril">Vibe</span></div>
+    <div class="rc" id="rc2"></div>
+    <div class="ri" id="ri3"><span class="rin">03</span><span class="ril">Look</span></div>
+  </aside>
+
+  <div class="panels">
+
+    <!-- PANEL 1: UPLOAD -->
+    <div class="panel active" id="p1">
+      <div class="ph">
+        <span class="phi">Étape 01</span>
+        <h2 class="pht">Sube tu <em>foto</em></h2>
+        <p class="phd">Una foto de frente, buena luz, fondo simple. La IA necesita verte bien para vestirte bien.</p>
+      </div>
+      <div id="upwrap">
+        <div class="drop" id="drop">
+          <div class="dicon">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+              <path d="M13 4v16M5 11l8-8 8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 22h20" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="dp1">Arrastra tu foto aquí</p>
+          <p class="dp2">o <button class="dlink" id="dlink">selecciona un archivo</button></p>
+          <p class="dfmt">JPG · PNG · WEBP · Máx 10 MB</p>
+        </div>
+        <input type="file" id="fi" accept="image/*">
+      </div>
+      <div class="prev" id="prev">
+        <div class="piw">
+          <canvas id="photoCanvas" width="150" height="196"></canvas>
+          <div class="pov"><button class="pchg" id="chg">Cambiar foto</button></div>
+        </div>
+        <div class="cr">
+          <div class="crh">
+            <div id="crsc" style="display:flex;align-items:center;gap:8px"><div class="sp"></div><span>Analizando colorimetría...</span></div>
+            <div class="crdh" id="crdn" style="display:none"><span style="font-size:13px">✓</span><span>Análisis completo</span></div>
+          </div>
+          <div id="crb" style="display:none">
+            <div class="crrow"><span class="crkey">Tono de piel</span><span class="crval"><span class="crdot" id="sdot"></span><span id="stone"></span></span></div>
+            <div class="crdiv"></div>
+            <div class="crrow"><span class="crkey">Subtono</span><span class="crval" id="ssub"></span></div>
+            <div class="crdiv"></div>
+            <div class="crrow"><span class="crkey">Estación cromática</span><span class="crval"><span class="crse" id="sse"></span></span></div>
+            <p class="crpl">Colores que te favorecen esta temporada</p>
+            <div class="crcs" id="crcs"></div>
+            <blockquote class="crq" id="crq"></blockquote>
+          </div>
+        </div>
+      </div>
+      <div class="pf">
+        <p class="err" id="e1">Por favor sube una foto para continuar.</p>
+        <button class="bte" id="b2" disabled>
+          <span>Continuar</span>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M6.5 2l4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: VIBE -->
+    <div class="panel" id="p2">
+      <div class="ph">
+        <span class="phi">Étape 02</span>
+        <h2 class="pht">Elige tu <em>vibe</em></h2>
+        <p class="phd">La IA te vestirá con el look de tu estilo. Podrás cambiar prendas individualmente después.</p>
+      </div>
+      <div class="vibes">
+        <div class="vc" data-v="Tech Bro"><span class="vcnum">I</span><div class="vcname">Tech Bro</div><div class="vchouse">Clean · Funcional · Streetwear</div><div class="vcdesc">La estética del builder moderno. Oversize controlado con acento tecnológico.</div><div class="vctags"><span>Oversize</span><span>Neutros fríos</span><span>Sneakers</span></div><div class="vcring"></div></div>
+        <div class="vc" data-v="Urban Chic"><span class="vcbadge">Top Pick</span><span class="vcnum">II</span><div class="vcname">Urban Chic</div><div class="vchouse">Editorial · Ciudad · Estructura</div><div class="vcdesc">Sofisticado sin esfuerzo. El blazer como manifiesto de temporada.</div><div class="vctags"><span>Blazer</span><span>Wide leg</span><span>Accesorios</span></div><div class="vcring"></div></div>
+        <div class="vc" data-v="Old Money"><span class="vcbadge">Editors Pick</span><span class="vcnum">III</span><div class="vcname">Old Money</div><div class="vchouse">Atemporal · Lujo callado · Clásico</div><div class="vcdesc">La discreción como lujo supremo. Detalles que se sienten, no se exhiben.</div><div class="vctags"><span>Trench</span><span>Tonos cálidos</span><span>Clásico</span></div><div class="vcring"></div></div>
+        <div class="vc" data-v="Minimalist"><span class="vcnum">IV</span><div class="vcname">Minimalist</div><div class="vchouse">Reducción · Esencia · Impacto</div><div class="vcdesc">La ausencia es la declaración. Monocromático con texturas sutiles.</div><div class="vctags"><span>Monocromático</span><span>Texturas</span><span>Cortes</span></div><div class="vcring"></div></div>
+      </div>
+      <div class="pf two">
+        <button class="btg" id="bk1">← Volver</button>
+        <button class="bte" id="b3" disabled>
+          <span>Generar mi Look</span>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M6.5 2l4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- PANEL 3: LOADING + RESULTS -->
+    <div class="panel" id="p3">
+      <div class="loading" id="la">
+        <div class="rww"><div class="rwf"></div><div class="rws"></div></div>
+        <h2 class="ldh">Vistiéndote con IA<span id="ell"></span></h2>
+        <p class="ldsub" id="lsub">Iniciando Virtual Try-On...</p>
+        <div class="pw"><div class="pb" id="pb"></div></div>
+        <div class="lst">
+          <span class="ls" id="ls1">Colorimetría</span><span class="lsd">·</span>
+          <span class="ls" id="ls2">Selección outfit</span><span class="lsd">·</span>
+          <span class="ls" id="ls3">Generando imagen IA</span><span class="lsd">·</span>
+          <span class="ls" id="ls4">Finalizando</span>
+        </div>
+        <div class="load-err" id="loadErr">
+          <strong>No se pudo generar la imagen.</strong><br>
+          <span id="loadErrMsg">Verifica tu conexión e intenta de nuevo.</span><br><br>
+          <button class="btg" id="btnRetry" style="margin:0 auto;display:block">Reintentar</button>
+        </div>
+      </div>
+
+      <div class="results" id="ra" style="display:none">
+        <div class="remast">
+          <div><span class="reiss">Look Personalizado · S/S 2026</span><h2 class="reh2" id="reh"></h2></div>
+          <div class="recp"><span class="recn" id="recn"></span><span class="recl">compatibilidad</span></div>
+        </div>
+
+        <!-- VIRTUAL TRY-ON SHOWCASE -->
+        <div>
+          <p class="rsl">Virtual Try-On — así te queda el look</p>
+          <div class="tryon-showcase">
+            <div class="tryon-col">
+              <span class="tryon-label">Tu foto original</span>
+              <div class="tryon-img-wrap">
+                <canvas id="resultCanvas" width="400" height="533"></canvas>
+              </div>
+            </div>
+            <div class="tryon-col">
+              <span class="tryon-label">Con tu nuevo look ✨</span>
+              <div class="tryon-img-wrap" id="tryonWrap">
+                <div class="tryon-generating" id="tryonGen">
+                  <div class="tg-spinner"></div>
+                  <p class="tg-text">La IA está vistiéndote...<br><span style="font-size:10px;opacity:.6">~20–40 segundos</span></p>
+                </div>
+                <div class="tryon-done" id="tryonDone">
+                  <img id="tryonResult" src="" alt="Tu look generado por IA" class="tryon-img">
+                </div>
+                <div class="tryon-error" id="tryonErr">
+                  <p>No se pudo generar.<br><button class="bts" id="btnTryonRetry">Reintentar</button></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATALOG -->
+        <div class="catalog-section">
+          <p class="catalog-title">¿Quieres cambiar alguna prenda?</p>
+          <p class="catalog-sub">Selecciona otra opción — la IA generará un nuevo look para ti</p>
+          <div class="catalog-tabs" id="catalogTabs"></div>
+          <div class="catalog-grid" id="catalogGrid"></div>
+          <button class="bte btn-apply" id="btnApply" disabled>
+            <span>Aplicar prenda seleccionada</span>
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M6.5 2l4.5 4.5-4.5 4.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <!-- INSIGHT -->
+        <div class="ei">
+          <div class="eirule"></div>
+          <blockquote class="eiq" id="eiq"></blockquote>
+          <div class="eirule"></div>
+        </div>
+
+        <!-- PALETTE -->
+        <div>
+          <p class="rsl">Tu paleta cromática personal</p>
+          <div class="palstrip" id="ps"></div>
+          <p class="pfnote">Calibrado a tu estación cromática — los colores que elevan tu presencia visual esta temporada.</p>
+        </div>
+
+        <!-- TRIPTYCH -->
+        <div class="trip">
+          <div class="tc"><span class="tci">✦</span><span class="tcn" id="tcse"></span><span class="tcl">Estación cromática</span></div>
+          <div class="tc"><span class="tci">↑</span><span class="tcn" id="tctr"></span><span class="tcl">Tendencia</span></div>
+          <div class="tc"><span class="tci">◈</span><span class="tcn" id="tcma"></span><span class="tcl">Compatibilidad</span></div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="ra">
+          <button class="bte btei" id="bdl">Descargar mi look</button>
+          <button class="bts" id="bsh">Compartir</button>
+          <button class="bts" id="brs">Nuevo análisis</button>
+        </div>
+
+        <!-- PRIVACY -->
+        <div class="pseal">
+          <div class="pslock">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="6" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 6V4.5a2.5 2.5 0 015 0V6" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            <span class="pst">Certificado de Privacidad CRIATech</span>
+          </div>
+          <p class="psp">Tu foto es procesada por la IA y eliminada inmediatamente. Nunca se almacena en nuestros servidores. La imagen generada tampoco se guarda. Tus datos biométricos son completamente privados.</p>
+        </div>
+
+        <!-- ANALYTICS -->
+        <details class="af">
+          <summary class="afs">📊 Analytics · Fase 1 — Validación de mercado</summary>
+          <div class="afg">
+            <div class="afi"><span class="afn" id="afs">0</span><span class="afl">Sesiones</span></div>
+            <div class="afi"><span class="afn" id="afv">—</span><span class="afl">Vibe top</span></div>
+            <div class="afi"><span class="afn" id="afd">0</span><span class="afl">Descargas</span></div>
+            <div class="afi"><span class="afn" id="afc">—</span><span class="afl">Conversión</span></div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="ftr">
+  <div class="ftrin">
+    <span class="ftrlogo">CRIA<span>Tech</span></span>
+    <div class="ftrlinks"><span>Privacidad</span><span class="flsep">·</span><span>Para marcas y retail</span><span class="flsep">·</span><span>Santiago, Chile</span></div>
+    <span class="ftrcopy">© 2026 CRIATech</span>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CRIATech — Virtual Try-On Frontend
+// ══════════════════════════════════════════════════════════════
+
+// CATALOG: Garment images from Unsplash (fashion stock, free to use)
+// In production: replace .img URLs with your own product photos on Cloudinary
+const CATALOG = {
+  "Tech Bro":{tabs:["Poleras","Pantalones","Calzado","Capas"],items:[[
+    {name:"Polera Oversize Gris",price:"$19.990",img:"https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=400&q=80",desc:"oversized gray t-shirt streetwear minimalist"},
+    {name:"Polera Negra Básica",price:"$14.990",img:"https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&q=80",desc:"black basic oversized t-shirt"},
+    {name:"Polera Blanca Oversize",price:"$17.990",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80",desc:"white oversized t-shirt clean"},
+    {name:"Polera Tech Azul",price:"$22.990",img:"https://images.unsplash.com/photo-1622445275576-721325763afe?w=400&q=80",desc:"blue tech fitted t-shirt"}
+  ],[
+    {name:"Cargo Pants Gris",price:"$34.990",img:"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80",desc:"gray cargo pants streetwear"},
+    {name:"Jogger Negro Slim",price:"$29.990",img:"https://images.unsplash.com/photo-1594938298603-c8148c4b4d83?w=400&q=80",desc:"black slim fit jogger pants"},
+    {name:"Jeans Slim Azul",price:"$39.990",img:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80",desc:"slim fit blue denim jeans"},
+    {name:"Pantalón Tech Negro",price:"$44.990",img:"https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&q=80",desc:"black technical athletic pants"}
+  ],[
+    {name:"Zapatilla Runner Blanca",price:"$59.990",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",desc:"white runner sneakers clean"},
+    {name:"Sneaker Negro Low",price:"$54.990",img:"https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=80",desc:"black low top sneakers"},
+    {name:"Zapatilla Gris Urban",price:"$49.990",img:"https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&q=80",desc:"gray urban casual sneakers"},
+    {name:"Sneaker Bicolor",price:"$64.990",img:"https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&q=80",desc:"two-tone retro sneakers streetwear"}
+  ],[
+    {name:"Hoodie Zip Gris",price:"$44.990",img:"https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=400&q=80",desc:"gray zip-up hoodie sweatshirt"},
+    {name:"Parka Negra Tech",price:"$89.990",img:"https://images.unsplash.com/photo-1548126032-079a0fb0099d?w=400&q=80",desc:"black technical parka jacket"},
+    {name:"Bomber Negra",price:"$74.990",img:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80",desc:"black bomber jacket streetwear"},
+    {name:"Cárdigan Oversize Beige",price:"$39.990",img:"https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&q=80",desc:"beige oversized cardigan knit"}
+  ]]},
+  "Urban Chic":{tabs:["Superiores","Inferiores","Calzado","Accesorios"],items:[[
+    {name:"Blazer Negro Oversize",price:"$89.990",img:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80",desc:"black oversized blazer women fashion editorial"},
+    {name:"Blusa Satinada Beige",price:"$34.990",img:"https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=400&q=80",desc:"beige satin blouse elegant women"},
+    {name:"Camisa Blanca Oversize",price:"$29.990",img:"https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=400&q=80",desc:"white oversized button down shirt women"},
+    {name:"Top Estructurado Negro",price:"$24.990",img:"https://images.unsplash.com/photo-1614251056216-f748f76cd228?w=400&q=80",desc:"black structured top women fashion"}
+  ],[
+    {name:"Pantalón Wide Leg Negro",price:"$49.990",img:"https://images.unsplash.com/photo-1594938298603-c8148c4b4d83?w=400&q=80",desc:"black wide leg palazzo trousers women"},
+    {name:"Falda Midi Camel",price:"$44.990",img:"https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&q=80",desc:"camel midi length skirt women elegant"},
+    {name:"Pantalón Sastre Gris",price:"$54.990",img:"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80",desc:"gray tailored straight trousers women"},
+    {name:"Jeans Tiro Alto",price:"$39.990",img:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80",desc:"high waist straight jeans women"}
+  ],[
+    {name:"Botín Chelsea Cuero",price:"$54.990",img:"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80",desc:"leather chelsea ankle boots women"},
+    {name:"Zapato Bloque Camel",price:"$49.990",img:"https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=400&q=80",desc:"camel block heel shoes women"},
+    {name:"Mocasín Negro",price:"$44.990",img:"https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&q=80",desc:"black leather loafer shoes women"},
+    {name:"Sneaker Blanca Limpia",price:"$39.990",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",desc:"clean white leather sneakers women fashion"}
+  ],[
+    {name:"Pañuelo Satinado",price:"$19.990",img:"https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&q=80",desc:"silk satin scarf fashion accessory"},
+    {name:"Bolso Estructurado",price:"$69.990",img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",desc:"structured leather handbag women"},
+    {name:"Cinturón Fino Dorado",price:"$14.990",img:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80",desc:"thin gold belt women fashion accessory"},
+    {name:"Aretes Minimalistas",price:"$12.990",img:"https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80",desc:"minimalist gold hoop earrings jewelry"}
+  ]]},
+  "Old Money":{tabs:["Abrigos","Inferiores","Calzado","Accesorios"],items:[[
+    {name:"Trench Beige Clásico",price:"$129.990",img:"https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=400&q=80",desc:"beige classic trench coat women elegant"},
+    {name:"Blazer Camel Doble",price:"$99.990",img:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80",desc:"camel double breasted blazer women classic"},
+    {name:"Sweater Cashmere Crema",price:"$89.990",img:"https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&q=80",desc:"cream cashmere knit sweater luxury"},
+    {name:"Polo Blanca Clásica",price:"$34.990",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80",desc:"white classic polo shirt preppy old money"}
+  ],[
+    {name:"Chino Slim Beige",price:"$39.990",img:"https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&q=80",desc:"beige slim chino trousers preppy"},
+    {name:"Pantalón Lana Camel",price:"$64.990",img:"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80",desc:"camel wool dress trousers elegant"},
+    {name:"Falda Plisada Midi",price:"$49.990",img:"https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&q=80",desc:"pleated midi skirt women classic elegant"},
+    {name:"Jeans Oscuro Slim",price:"$44.990",img:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80",desc:"dark slim fit jeans classic preppy"}
+  ],[
+    {name:"Mocasín Cognac",price:"$69.990",img:"https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&q=80",desc:"cognac leather penny loafer preppy"},
+    {name:"Botín Camel Cuero",price:"$79.990",img:"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80",desc:"camel leather ankle boot classic women"},
+    {name:"Oxford Negro",price:"$64.990",img:"https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=400&q=80",desc:"black oxford dress shoe classic elegant"},
+    {name:"Bota Equestre Marrón",price:"$99.990",img:"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80",desc:"brown tall equestrian riding boots"}
+  ],[
+    {name:"Reloj Dorado Clásico",price:"$89.990",img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80",desc:"gold classic face wristwatch elegant luxury"},
+    {name:"Bolso Tote Cuero Beige",price:"$79.990",img:"https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",desc:"beige leather tote bag classic women"},
+    {name:"Bufanda Lana Escocesa",price:"$29.990",img:"https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&q=80",desc:"plaid wool tartan scarf preppy classic"},
+    {name:"Sombrero Panamá",price:"$34.990",img:"https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400&q=80",desc:"panama hat straw classic fashion summer"}
+  ]]},
+  "Minimalist":{tabs:["Superiores","Inferiores","Calzado","Capas"],items:[[
+    {name:"Camiseta Blanca Pima",price:"$14.990",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80",desc:"white minimalist cotton t-shirt clean basic"},
+    {name:"Top Recto Negro",price:"$19.990",img:"https://images.unsplash.com/photo-1614251056216-f748f76cd228?w=400&q=80",desc:"black straight minimal sleeveless top women"},
+    {name:"Camiseta Gris Básica",price:"$12.990",img:"https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&q=80",desc:"gray basic minimal t-shirt clean"},
+    {name:"Camisa Blanca Minimal",price:"$29.990",img:"https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=400&q=80",desc:"white minimalist button down shirt clean aesthetic"}
+  ],[
+    {name:"Pantalón Sastre Negro",price:"$54.990",img:"https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400&q=80",desc:"black tailored straight leg dress pants minimalist"},
+    {name:"Falda Tubo Negra",price:"$39.990",img:"https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&q=80",desc:"black pencil skirt minimalist women clean"},
+    {name:"Jeans Oscuro Recto",price:"$44.990",img:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80",desc:"dark wash straight leg jeans minimal clean"},
+    {name:"Pantalón Blanco Recto",price:"$49.990",img:"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80",desc:"white straight leg trousers minimalist clean"}
+  ],[
+    {name:"Slip-On Blanco",price:"$34.990",img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",desc:"white slip-on sneakers minimalist clean"},
+    {name:"Mule Negro Cuero",price:"$44.990",img:"https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=400&q=80",desc:"black leather mule slide shoes minimalist"},
+    {name:"Zapatilla Blanca Clean",price:"$49.990",img:"https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&q=80",desc:"clean white leather minimalist sneakers"},
+    {name:"Loafer Gris",price:"$54.990",img:"https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&q=80",desc:"gray suede loafer shoes minimal"}
+  ],[
+    {name:"Cárdigan Merino Gris",price:"$49.990",img:"https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?w=400&q=80",desc:"gray merino wool fine knit cardigan minimalist"},
+    {name:"Chaqueta Cuero Negro",price:"$119.990",img:"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80",desc:"black leather biker jacket minimalist"},
+    {name:"Blazer Blanco Minimal",price:"$79.990",img:"https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80",desc:"white minimalist single button blazer women"},
+    {name:"Trench Negro Clásico",price:"$99.990",img:"https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=400&q=80",desc:"black classic trench coat minimalist"}
+  ]]}
+};
+
+const PROFILES=[
+  {tone:"Clara",hex:"#FFD5B0",sub:"Cálido dorado",season:"Primavera",colors:[{h:"#FF6B6B",n:"Coral"},{h:"#F7DC6F",n:"Amarillo sol"},{h:"#82E0AA",n:"Verde menta"},{h:"#AED6F1",n:"Azul cielo"}],insight:"Tu tono primaveral resplandece con colores cálidos y saturados. Evita los neutros apagados — tu piel pide vitalidad y luz."},
+  {tone:"Media",hex:"#C8956C",sub:"Neutro equilibrado",season:"Verano",colors:[{h:"#8E44AD",n:"Lavanda"},{h:"#3498DB",n:"Azul océano"},{h:"#1ABC9C",n:"Verde agua"},{h:"#E74C3C",n:"Frambuesa"}],insight:"Tu subtono neutro es una ventaja: puedes explorar cálidos y fríos. Los saturados son tus aliados naturales esta temporada."},
+  {tone:"Oliva",hex:"#8D6E52",sub:"Frío ceniza",season:"Invierno",colors:[{h:"#2C3E50",n:"Azul marino"},{h:"#C0392B",n:"Rojo rubí"},{h:"#F39C12",n:"Ámbar"},{h:"#27AE60",n:"Verde bosque"}],insight:"Tu piel oliva florece con contrastes fuertes. Los colores oscuros y joya definen tu silueta con autoridad natural."},
+  {tone:"Profunda",hex:"#4A2C1A",sub:"Cálido rojizo",season:"Otoño",colors:[{h:"#D35400",n:"Naranja quemado"},{h:"#7D3C98",n:"Berenjana"},{h:"#1F618D",n:"Azul petróleo"},{h:"#145A32",n:"Verde caza"}],insight:"Los colores joya y terrosos son tus aliados. Esmeraldas, cobres, granates crean una armonía poderosa con tu tono."}
+];
+
+const VIBES_META={
+  "Tech Bro":   {headline:"Digital Minimalism",match:92,trend:"Hot",      palette:[{h:"#1A1A2E",n:"Medianoche"},{h:"#374151",n:"Acero"},{h:"#6B7280",n:"Grafito"},{h:"#E94560",n:"Acento"},{h:"#F5F5F5",n:"Hueso"}],    insight:"<strong>Paleta dominante:</strong> Neutros fríos con acento tecnológico. El oversize controlado crea una silueta moderna que comunica foco y estilo sin esfuerzo."},
+  "Urban Chic": {headline:"Architecture of Style",match:96,trend:"Top",   palette:[{h:"#1C1C1C",n:"Carbón"},{h:"#8B7355",n:"Camel"},{h:"#C9B99A",n:"Arena"},{h:"#F0EDE8",n:"Crema"},{h:"#D4AF37",n:"Dorado"}],       insight:"<strong>La clave:</strong> Proporciones desafiadas. El blazer oversized con pantalón ancho crea una silueta editorial. Tu colorimetría pide el acento en el accesorio."},
+  "Old Money":  {headline:"Quiet Luxury",match:98,trend:"Atemporal",       palette:[{h:"#F5F0E8",n:"Marfil"},{h:"#D2B48C",n:"Camel claro"},{h:"#8B7355",n:"Camel"},{h:"#4A3728",n:"Chocolate"},{h:"#C8B99A",n:"Beige"}],insight:"<strong>Discreción elegante:</strong> El lujo callado se construye en los detalles. Los tonos cálidos se alinean con tu estación cromática a la perfección."},
+  "Minimalist": {headline:"The Radical Reduction",match:94,trend:"Clásico",palette:[{h:"#FFFFFF",n:"Blanco"},{h:"#E8E8E8",n:"Humo"},{h:"#9CA3AF",n:"Gris"},{h:"#4B5563",n:"Carbón"},{h:"#111827",n:"Negro"}],       insight:"<strong>Menos ruido, más impacto:</strong> La ausencia es la declaración. Monocromático con texturas que se notan de cerca. Tu tono define el punto exacto del espectro neutro."}
+};
+
+const A={
+  d:{s:+(sessionStorage.getItem("s")||0),v:JSON.parse(sessionStorage.getItem("v")||"{}"),dl:+(sessionStorage.getItem("dl")||0),a:+(sessionStorage.getItem("a")||0)},
+  save(){sessionStorage.setItem("s",this.d.s);sessionStorage.setItem("v",JSON.stringify(this.d.v));sessionStorage.setItem("dl",this.d.dl);sessionStorage.setItem("a",this.d.a)},
+  track(v){this.d.s++;this.d.a++;this.d.v[v]=(this.d.v[v]||0)+1;this.save()},
+  tdl(){this.d.dl++;this.save()},
+  top(){const vc=this.d.v;return Object.keys(vc).length?Object.keys(vc).sort((a,b)=>vc[b]-vc[a])[0]:"—"},
+  conv(){return this.d.a?Math.round(this.d.s/this.d.a*100)+"%":"—"}
+};
+
+// STATE
+const S={hp:false,vibe:null,prof:null,personB64:null,currentGarment:null,activeTab:0,selectedItem:null,loadTimer:null};
+
+const $=i=>document.getElementById(i);
+const $$=s=>document.querySelectorAll(s);
+function toast(m,ms=2800){const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),ms)}
+
+// Ellipsis
+let es="";setInterval(()=>{es=es.length>=3?"":es+".";const e=$("ell");if(e)e.textContent=es},500);
+
+// Header scroll
+let ly=0;window.addEventListener("scroll",()=>{const y=window.scrollY,h=$("hdr");h.style.transform=y>80&&y>ly?"translateY(-100%)":"translateY(0)";h.style.transition="transform .4s ease";ly=y});
+
+// Step nav
+function goS(n){
+  $$(".panel").forEach(p=>p.classList.remove("active"));$("p"+n).classList.add("active");
+  [1,2,3].forEach(i=>{const ri=$("ri"+i),rc=$("rc"+i);ri.classList.remove("active","done");
+    if(i<n){ri.classList.add("done");if(rc)rc.classList.add("done")}
+    if(i===n)ri.classList.add("active");if(rc&&i>=n)rc.classList.remove("done")});
+  window.scrollTo({top:Math.max($("shell").getBoundingClientRect().top+window.scrollY-20,0),behavior:"smooth"});
+}
+
+$("heroCta").onclick=()=>$("shell").scrollIntoView({behavior:"smooth"});
+
+// UPLOAD
+const drop=$("drop"),fi=$("fi");
+$("dlink").onclick=e=>{e.stopPropagation();fi.click()};
+drop.onclick=e=>{if(e.target!==$("dlink"))fi.click()};
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("dov")});
+drop.addEventListener("dragleave",()=>drop.classList.remove("dov"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("dov");const f=e.dataTransfer.files[0];if(f&&f.type.startsWith("image/"))handleFile(f);else toast("Sube una imagen JPG, PNG o WEBP.")});
+fi.addEventListener("change",e=>{if(e.target.files[0])handleFile(e.target.files[0])});
+$("chg").onclick=()=>{$("prev").classList.remove("vis");setTimeout(()=>$("prev").style.display="none",300);$("upwrap").style.display="block";S.hp=false;S.personB64=null;$("b2").disabled=true;$("e1").style.display="none";fi.value=""};
+
+function handleFile(f){
+  if(f.size>10*1024*1024){toast("Archivo demasiado grande. Máx 10 MB.");return}
+  const url=URL.createObjectURL(f);
+  const img=new Image();
+  img.onload=()=>{
+    // Preview canvas
+    const c=$("photoCanvas"),ctx=c.getContext("2d");
+    c.width=150;c.height=196;
+    const sc=Math.max(150/img.width,196/img.height),sw=150/sc,sh=196/sc,sx=(img.width-sw)/2,sy=(img.height-sh)/2;
+    ctx.drawImage(img,sx,sy,sw,sh,0,0,150,196);
+    // Result canvas (larger)
+    const rc=$("resultCanvas"),rctx=rc.getContext("2d");
+    rc.width=400;rc.height=533;
+    const rsc=Math.max(400/img.width,533/img.height),rsw=400/rsc,rsh=533/rsc,rsx=(img.width-rsw)/2,rsy=(img.height-rsh)/2;
+    rctx.drawImage(img,rsx,rsy,rsw,rsh,0,0,400,533);
+    // Base64 for API (resized)
+    const tc=document.createElement("canvas");
+    tc.width=Math.min(img.width,1024);tc.height=Math.round(img.height*(tc.width/img.width));
+    tc.getContext("2d").drawImage(img,0,0,tc.width,tc.height);
+    S.personB64=tc.toDataURL("image/jpeg",0.85).split(",")[1];
+    URL.revokeObjectURL(url);
+    $("upwrap").style.display="none";
+    const pv=$("prev");pv.style.display="flex";setTimeout(()=>pv.classList.add("vis"),10);
+    runColor();
+  };
+  img.onerror=()=>toast("No se pudo leer la imagen. Intenta con otro archivo.");
+  img.src=url;
+}
+
+function runColor(){
+  $("crdn").style.display="none";$("crsc").style.display="flex";$("crb").style.display="none";$("b2").disabled=true;
+  S.prof=PROFILES[Math.floor(Math.random()*PROFILES.length)];
+  setTimeout(()=>{
+    const p=S.prof;
+    $("sdot").style.background=p.hex;$("stone").textContent=p.tone;$("ssub").textContent=p.sub;$("sse").textContent=p.season;$("crq").textContent=p.insight;
+    const cs=$("crcs");cs.innerHTML="";
+    p.colors.forEach(c=>{const el=document.createElement("div");el.className="crch";el.textContent=c.n;el.style.color=c.h;el.style.borderColor=c.h+"55";el.style.background=c.h+"18";cs.appendChild(el)});
+    $("crsc").style.display="none";$("crdn").style.display="flex";$("crb").style.display="block";
+    S.hp=true;$("b2").disabled=false;
+  },1800);
+}
+
+$("b2").onclick=()=>{if(!S.hp){$("e1").style.display="block";return}$("e1").style.display="none";goS(2)};
+
+$$(".vc").forEach(c=>{c.onclick=()=>{$$(".vc").forEach(x=>x.classList.remove("sel"));c.classList.add("sel");S.vibe=c.dataset.v;$("b3").disabled=false}});
+$("bk1").onclick=()=>goS(1);
+
+$("b3").onclick=()=>{if(!S.vibe)return;A.track(S.vibe);goS(3);startFlow()};
+
+function startFlow(){
+  const cat=CATALOG[S.vibe];
+  S.currentGarment=cat.items[0][0];S.activeTab=0;
+  runLoading();
+}
+
+const MSGS=["Analizando tu colorimetría...","Seleccionando outfit para tu vibe...","Enviando a la IA de Virtual Try-On...","La IA te está vistiendo...","Ajustando costuras digitales...","Casi listo..."];
+
+function runLoading(){
+  const pb=$("pb"),sub=$("lsub");
+  ["ls1","ls2","ls3","ls4"].forEach(id=>{const e=$(id);e.classList.remove("active","done")});
+  $("loadErr").style.display="none";pb.style.width="0%";sub.textContent=MSGS[0];
+  let prog=0,mi=0,si=0;const stages=["ls1","ls2","ls3","ls4"];
+  S.loadTimer=setInterval(()=>{
+    prog+=prog<60?(Math.random()*8+4):(Math.random()*1.5+0.3);prog=Math.min(prog,90);
+    pb.style.width=Math.round(prog)+"%";
+    const tm=Math.floor(prog/100*MSGS.length);
+    if(tm>mi&&mi<MSGS.length-1){mi=tm;sub.textContent=MSGS[Math.min(mi,MSGS.length-1)]}
+    const ts=Math.floor(prog/25);
+    while(si<Math.min(ts,4)){if(si>0){const pv=$(stages[si-1]);if(pv){pv.classList.remove("active");pv.classList.add("done")}}const cu=$(stages[si]);if(cu)cu.classList.add("active");si++}
+  },300);
+  callAPI();
+}
+
+async function callAPI(){
+  try{
+    const garmentB64=await urlToBase64(S.currentGarment.img);
+    const res=await fetch("/api/tryon",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({personImage:S.personB64,garmentImage:garmentB64,garmentDescription:S.currentGarment.desc})});
+    const data=await res.json();
+    if(!res.ok||!data.success)throw new Error(data.error||"Error en el servidor");
+    onSuccess(data.resultUrl);
+  }catch(err){console.error(err);onError(err.message)}
+}
+
+function onSuccess(url){
+  clearInterval(S.loadTimer);
+  $("pb").style.width="100%";
+  ["ls1","ls2","ls3","ls4"].forEach(id=>{const e=$(id);if(e){e.classList.remove("active");e.classList.add("done")}});
+  setTimeout(()=>{$("la").style.display="none";buildResults(url)},600);
+}
+
+function onError(msg){
+  clearInterval(S.loadTimer);
+  $("loadErr").style.display="block";
+  $("loadErrMsg").textContent=msg||"Error de conexión. Verifica tu internet.";
+}
+
+$("btnRetry").onclick=()=>{$("loadErr").style.display="none";$("pb").style.width="0%";runLoading()};
+
+function buildResults(tryonUrl){
+  const vm=VIBES_META[S.vibe],p=S.prof;
+  $("reh").textContent=vm.headline;$("recn").textContent=vm.match+"%";
+  $("eiq").innerHTML=vm.insight;
+  $("tcse").textContent=p?p.season:"—";$("tctr").textContent=vm.trend;$("tcma").textContent=vm.match+"%";
+  const ps=$("ps");ps.innerHTML="";
+  vm.palette.forEach(c=>{const b=document.createElement("div");b.className="palblk";b.title=c.n;b.style.background=c.h;ps.appendChild(b)});
+  showTryon(tryonUrl);
+  buildCatalog();
+  $("ra").style.display="flex";
+  ua();
+}
+
+function showTryon(url){
+  if(url){
+    const img=$("tryonResult");
+    img.src=url;
+    img.onload=()=>{$("tryonGen").style.display="none";$("tryonDone").style.display="block"};
+    img.onerror=()=>{$("tryonGen").style.display="none";$("tryonErr").style.display="flex"};
+  }else{$("tryonGen").style.display="none";$("tryonErr").style.display="flex"}
+}
+
+function buildCatalog(){
+  const cat=CATALOG[S.vibe];
+  const tabs=$("catalogTabs");tabs.innerHTML="";
+  cat.tabs.forEach((tab,i)=>{
+    const b=document.createElement("button");b.className="ctab"+(i===S.activeTab?" active":"");b.textContent=tab;
+    b.onclick=()=>{S.activeTab=i;S.selectedItem=null;$("btnApply").disabled=true;buildGrid();$$(".ctab").forEach(x=>x.classList.remove("active"));b.classList.add("active")};
+    tabs.appendChild(b);
+  });
+  buildGrid();
+}
+
+function buildGrid(){
+  const items=CATALOG[S.vibe].items[S.activeTab];
+  const grid=$("catalogGrid");grid.innerHTML="";
+  items.forEach(item=>{
+    const d=document.createElement("div");d.className="citem";
+    if(S.selectedItem&&S.selectedItem.name===item.name)d.classList.add("selected");
+    d.innerHTML=`<img class="citem-img" src="${item.img}" alt="${item.name}" loading="lazy"><div class="citem-info"><span class="citem-name">${item.name}</span><span class="citem-price">${item.price}</span></div><div class="citem-check">✓</div>`;
+    d.onclick=()=>{$$(".citem").forEach(x=>x.classList.remove("selected"));d.classList.add("selected");S.selectedItem=item;$("btnApply").disabled=false};
+    grid.appendChild(d);
+  });
+}
+
+$("btnApply").onclick=()=>{
+  if(!S.selectedItem)return;
+  S.currentGarment=S.selectedItem;S.selectedItem=null;$("btnApply").disabled=true;
+  $("tryonGen").style.display="flex";$("tryonDone").style.display="none";$("tryonErr").style.display="none";
+  toast("Generando nuevo look con IA...");
+  callAPI();
+};
+$("btnTryonRetry").onclick=()=>{$("tryonGen").style.display="flex";$("tryonErr").style.display="none";callAPI()};
+
+$("bdl").onclick=()=>{
+  const img=$("tryonResult");
+  if(img&&img.src&&img.naturalWidth>0){
+    const a=document.createElement("a");a.href=img.src;a.download="mi-look-criatech.jpg";a.click();
+    A.tdl();ua();toast("Look descargado ✨");
+  }else toast("Genera un look primero para poder descargarlo.");
+};
+
+$("bsh").onclick=()=>{
+  if(navigator.share)navigator.share({title:"Mi look CRIATech",text:`Me probé un outfit con IA — vibe ${S.vibe}! Pruébalo tú también 🤖✨`}).catch(()=>{});
+  else{navigator.clipboard?.writeText(window.location.href).then(()=>toast("Link copiado al portapapeles"))}
+};
+
+$("brs").onclick=()=>{
+  S.hp=false;S.vibe=null;S.prof=null;S.personB64=null;S.currentGarment=null;S.activeTab=0;S.selectedItem=null;
+  clearInterval(S.loadTimer);
+  $("upwrap").style.display="block";const pv=$("prev");pv.classList.remove("vis");pv.style.display="none";
+  $("crdn").style.display="none";$("crsc").style.display="flex";$("crb").style.display="none";
+  $("b2").disabled=true;$("e1").style.display="none";fi.value="";
+  $$(".vc").forEach(c=>c.classList.remove("sel"));$("b3").disabled=true;
+  $("pb").style.width="0%";$("la").style.display="flex";$("ra").style.display="none";
+  $("loadErr").style.display="none";
+  $("tryonGen").style.display="flex";$("tryonDone").style.display="none";$("tryonErr").style.display="none";
+  goS(1);
+};
+
+function ua(){$("afs").textContent=A.d.s;$("afv").textContent=A.top();$("afd").textContent=A.d.dl;$("afc").textContent=A.conv()}
+
+async function urlToBase64(url){
+  const res=await fetch(url);
+  const blob=await res.blob();
+  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(blob)});
+}
+</script>
+</body>
+</html>
