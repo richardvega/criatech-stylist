@@ -1,43 +1,54 @@
 // api/tryon.js — CRIATech Virtual Try-On
-// Fal.ai IDM-VTON correct integration
-// Docs: https://fal.ai/models/fal-ai/idm-vton
+// Strategy: pass base64 data URIs directly to Fal.ai — no storage upload needed
+// Fal.ai docs: "You can pass a Base64 data URI as a file input. The API will handle the file decoding for you."
+// Model docs: https://fal.ai/models/fal-ai/idm-vton
 
 export const config = { maxDuration: 60 };
 
 export default async function handler(req, res) {
+  // ── CORS ──────────────────────────────────────────────────────────────────
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // ── API KEY ───────────────────────────────────────────────────────────────
   const FAL_KEY = process.env.FAL_API_KEY;
   if (!FAL_KEY) {
-    console.error('FAL_API_KEY not set in environment');
-    return res.status(500).json({ error: 'API key not configured' });
+    return res.status(500).json({ error: 'API key not configured. Add FAL_API_KEY to Vercel Environment Variables.' });
   }
 
-  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  // ── PARSE BODY ────────────────────────────────────────────────────────────
+  let body;
+  try {
+    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  } catch {
+    return res.status(400).json({ error: 'Invalid request body' });
+  }
+
   const { personImage, garmentImage, garmentDescription } = body || {};
   if (!personImage || !garmentImage) {
     return res.status(400).json({ error: 'Missing personImage or garmentImage' });
   }
 
   try {
-    // Convert base64 to data URIs
-    const personUri  = personImage.startsWith('data:')  ? personImage  : `data:image/jpeg;base64,${personImage}`;
-    const garmentUri = garmentImage.startsWith('data:') ? garmentImage : `data:image/jpeg;base64,${garmentImage}`;
+    // ── BUILD DATA URIs ───────────────────────────────────────────────────────
+    // Fal.ai accepts base64 data URIs natively — no upload step needed
+    const personDataUri  = personImage.startsWith('data:')
+      ? personImage
+      : `data:image/jpeg;base64,${personImage}`;
 
-    // Upload both images to Fal.ai storage
-    const [personUrl, garmentUrl] = await Promise.all([
-      uploadToFal(personUri, FAL_KEY),
-      uploadToFal(garmentUri, FAL_KEY),
-    ]);
+    const garmentDataUri = garmentImage.startsWith('data:')
+      ? garmentImage
+      : `data:image/jpeg;base64,${garmentImage}`;
 
-    console.log('Uploaded person:', personUrl);
-    console.log('Uploaded garment:', garmentUrl);
+    // ── CALL IDM-VTON ─────────────────────────────────────────────────────────
+    // Correct endpoint and params per: https://fal.ai/models/fal-ai/idm-vton
+    // Input schema: human_image_url, garment_image_url, description (all required)
+    // The model accepts data URIs as URLs
+    console.log('Calling fal.ai IDM-VTON...');
 
-    // Call IDM-VTON — correct params per fal.ai docs
     const falRes = await fetch('https://fal.run/fal-ai/idm-vton', {
       method: 'POST',
       headers: {
@@ -45,104 +56,107 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        human_image_url:     personUrl,
-        garment_image_url:   garmentUrl,
+        human_image_url:     personDataUri,
+        garment_image_url:   garmentDataUri,
         description:         garmentDescription || 'stylish fashion garment',
         num_inference_steps: 30,
         seed:                Math.floor(Math.random() * 100000),
       }),
     });
 
-    const raw = await falRes.text();
-    console.log('Fal status:', falRes.status, '| body:', raw.slice(0, 400));
+    const rawText = await falRes.text();
+    console.log('Fal.ai HTTP status:', falRes.status);
+    console.log('Fal.ai response (first 600 chars):', rawText.slice(0, 600));
 
     if (!falRes.ok) {
-      return res.status(502).json({ error: `Fal.ai ${falRes.status}`, details: raw.slice(0, 400) });
+      return res.status(502).json({
+        error: `Fal.ai returned HTTP ${falRes.status}`,
+        details: rawText.slice(0, 500),
+      });
     }
 
-    const data = JSON.parse(raw);
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      return res.status(502).json({ error: 'Fal.ai returned invalid JSON', raw: rawText.slice(0, 300) });
+    }
 
-    // Async queue response
+    // ── HANDLE ASYNC QUEUE ────────────────────────────────────────────────────
+    // fal.run returns synchronously but may queue — check for request_id
     if (data.request_id) {
+      console.log('Job queued, request_id:', data.request_id);
       const imageUrl = await pollQueue(data.request_id, FAL_KEY);
       return res.status(200).json({ success: true, resultUrl: imageUrl });
     }
 
-    // Sync response — output schema: { image: { url } }
+    // ── HANDLE SYNC RESPONSE ──────────────────────────────────────────────────
+    // IDM-VTON output schema: { image: { url, width, height, content_type } }
     const imageUrl = data?.image?.url || data?.images?.[0]?.url;
     if (!imageUrl) {
-      return res.status(502).json({ error: 'No image in Fal.ai response', raw: raw.slice(0, 300) });
+      console.error('No image URL in response. Full data:', JSON.stringify(data).slice(0, 500));
+      return res.status(502).json({
+        error: 'No image URL in Fal.ai response',
+        hint: 'Check Fal.ai logs in their dashboard',
+        raw: JSON.stringify(data).slice(0, 300),
+      });
     }
 
+    console.log('Success! Image URL:', imageUrl);
     return res.status(200).json({ success: true, resultUrl: imageUrl });
 
   } catch (err) {
-    console.error('Tryon error:', err.message);
-    return res.status(500).json({ error: err.message });
+    console.error('Unhandled error:', err.message);
+    return res.status(500).json({ error: err.message || 'Internal server error' });
   }
 }
 
-async function uploadToFal(dataUri, apiKey) {
-  const base64 = dataUri.replace(/^data:image\/\w+;base64,/, '');
-  const buffer = Buffer.from(base64, 'base64');
+// ── POLL QUEUE ────────────────────────────────────────────────────────────────
+async function pollQueue(requestId, apiKey, maxAttempts = 25) {
+  const statusUrl = `https://queue.fal.run/fal-ai/idm-vton/requests/${requestId}`;
 
-  // Primary: Fal.ai storage upload
-  const res = await fetch('https://storage.googleapis.com/fal-ai-serverless-uploads/upload', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'image/jpeg',
-    },
-    body: buffer,
-  });
+  for (let i = 0; i < maxAttempts; i++) {
+    await sleep(2500); // Wait 2.5s between polls
 
-  if (res.ok) {
-    const data = await res.json();
-    if (data.url) return data.url;
-  }
+    let statusData;
+    try {
+      const r = await fetch(statusUrl, {
+        headers: { 'Authorization': `Key ${apiKey}` },
+      });
+      if (!r.ok) {
+        console.log(`Poll ${i + 1}: HTTP ${r.status}, retrying...`);
+        continue;
+      }
+      statusData = await r.json();
+    } catch (e) {
+      console.log(`Poll ${i + 1}: fetch error ${e.message}, retrying...`);
+      continue;
+    }
 
-  // Fallback: Fal platform API storage
-  const fallback = await fetch('https://api.fal.ai/v1/storage/upload/initiate', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ content_type: 'image/jpeg', file_size: buffer.length }),
-  });
+    console.log(`Poll ${i + 1}: status = ${statusData.status}`);
 
-  if (!fallback.ok) {
-    const txt = await fallback.text();
-    throw new Error(`Upload failed: ${txt.slice(0, 200)}`);
-  }
-
-  const { upload_url, file_url } = await fallback.json();
-
-  await fetch(upload_url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'image/jpeg' },
-    body: buffer,
-  });
-
-  return file_url;
-}
-
-async function pollQueue(requestId, apiKey, max = 24) {
-  const base = `https://queue.fal.run/fal-ai/idm-vton/requests/${requestId}`;
-  for (let i = 0; i < max; i++) {
-    await new Promise(r => setTimeout(r, 2500));
-    const r = await fetch(base, { headers: { 'Authorization': `Key ${apiKey}` } });
-    if (!r.ok) continue;
-    const s = await r.json();
-    console.log(`Poll ${i+1}:`, s.status);
-    if (s.status === 'COMPLETED') {
-      const rr = await fetch(`${base}/result`, { headers: { 'Authorization': `Key ${apiKey}` } });
-      const result = await rr.json();
+    if (statusData.status === 'COMPLETED') {
+      // Fetch result
+      const resultRes = await fetch(`${statusUrl}/result`, {
+        headers: { 'Authorization': `Key ${apiKey}` },
+      });
+      const result = await resultRes.json();
       const url = result?.image?.url || result?.images?.[0]?.url;
-      if (!url) throw new Error('Completed but no URL: ' + JSON.stringify(result).slice(0, 200));
+      if (!url) throw new Error('Completed but no image URL: ' + JSON.stringify(result).slice(0, 200));
       return url;
     }
-    if (s.status === 'FAILED') throw new Error('Failed: ' + JSON.stringify(s.error || s).slice(0, 200));
+
+    if (statusData.status === 'FAILED') {
+      const reason = statusData.error?.message || JSON.stringify(statusData).slice(0, 200);
+      throw new Error(`Generation failed: ${reason}`);
+    }
+
+    // IN_QUEUE or IN_PROGRESS → keep polling
   }
-  throw new Error('Timeout — try again');
+
+  throw new Error('Timeout: generation took too long. Try again.');
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
