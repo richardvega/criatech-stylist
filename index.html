@@ -740,13 +740,41 @@ function runLoading(){
 
 async function callAPI(){
   try{
+    // Step 1: Submit job — returns request_id fast (<3s), avoids Vercel timeout
     const garmentB64=await urlToBase64(S.currentGarment.img);
-    const res=await fetch("/api/tryon",{method:"POST",headers:{"Content-Type":"application/json"},
+    const submitRes=await fetch("/api/tryon",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({personImage:S.personB64,garmentImage:garmentB64,garmentDescription:S.currentGarment.desc})});
-    const data=await res.json();
-    if(!res.ok||!data.success)throw new Error(data.error||"Error en el servidor");
-    onSuccess(data.resultUrl);
+    const submitData=await submitRes.json();
+    if(!submitRes.ok) throw new Error(submitData.error||"Error al enviar a la IA");
+    // Already completed (sync response)
+    if(submitData.status==='COMPLETED'&&submitData.resultUrl){onSuccess(submitData.resultUrl);return;}
+    if(!submitData.requestId) throw new Error("No se recibió ID de la IA: "+JSON.stringify(submitData).slice(0,100));
+    // Step 2: Poll for result (frontend polls every 3s for up to 90s)
+    await pollForResult(submitData.requestId);
   }catch(err){console.error(err);onError(err.message)}
+}
+
+async function pollForResult(requestId){
+  const maxAttempts=30; // 30 x 3s = 90s max
+  for(let i=0;i<maxAttempts;i++){
+    await new Promise(r=>setTimeout(r,3000));
+    try{
+      const r=await fetch("/api/tryon?id="+encodeURIComponent(requestId));
+      const d=await r.json();
+      if(!r.ok) throw new Error(d.error||"Error al consultar estado");
+      if(d.status==='COMPLETED'){onSuccess(d.resultUrl);return;}
+      if(d.status==='FAILED') throw new Error(d.error||"La IA no pudo generar la imagen");
+      // Update loading message with queue position
+      const pos=d.queuePosition;
+      const sub=document.getElementById("lsub");
+      if(sub&&d.status==='IN_QUEUE') sub.textContent=pos!=null?"En cola, posición "+pos+"...":"En cola...";
+      if(sub&&d.status==='IN_PROGRESS') sub.textContent="La IA está procesando tu look...";
+    }catch(err){
+      if(err.message.includes("Failed to fetch")||err.message.includes("NetworkError")){continue;}
+      throw err;
+    }
+  }
+  throw new Error("Tiempo agotado — la IA tardó demasiado. Intenta de nuevo.");
 }
 
 function onSuccess(url){
